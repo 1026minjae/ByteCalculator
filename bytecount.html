@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>바이트 계산기</title>
+    <style>
+        html {
+            font-family: "Malgun Gothic Light";
+        }
+        textarea {
+            width: 100%;
+            height: 600px;
+            font-size: 16px;
+            float: left;
+        }
+        ul {
+            float: left;
+            margin-right: 30%;
+        }
+    </style>
+    <script>
+        var pattern_kor=/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/;
+        var pattern_eng=/[a-zA-Z]/;
+        var pattern_blank=/\s/;
+        var pattern_endline=/(\n|\r\n)/;
+
+        function count(text, mode) {
+            var tot = text.length;
+            var blank = 0;
+            var kor = 0;
+            var eng = 0;
+            var byte = 0;
+            var byte_n = 0;
+            var temp;
+
+            for(i=0;i<text.length;i+=1) 
+            {
+                temp=text.charAt(i);
+                if(pattern_kor.test(temp)) {
+                    kor+=1;
+                    byte+=2;
+                    byte_n+=3;
+                } else if(pattern_eng.test(temp)) {
+                    eng+=1;
+                    byte+=1;
+                    byte_n+=1;
+                } else if(pattern_blank.test(temp)) {
+                    blank+=1;
+                    byte+=1;
+                    if(pattern_endline.test(temp)) {
+                        byte_n+=2;
+                    } else {
+                        byte_n+=1;
+                    }
+                } else {
+                    byte+=1;
+                    byte_n+=1;
+                }
+            }
+
+            document.getElementsByClassName("f")[0].innerHTML=kor;
+            document.getElementsByClassName("f")[1].innerHTML=eng;
+            document.getElementsByClassName("f")[2].innerHTML=tot-kor-eng;
+            document.getElementsByClassName("f")[3].innerHTML=tot;
+            document.getElementsByClassName("f")[4].innerHTML=tot-blank;
+            document.getElementsByClassName("f")[5]=byte;
+            document.getElementsByClassName("f")[6].innerHTML=byte-blank;
+            document.getElementsByClassName("f")[7].innerHTML=byte_n;
+        }
+        
+        function textChanged(){
+            count(document.getElementById("textbox").value, 1);
+        }
+
+        function textDragged() {
+            var txt = '';
+		    if(window.getSelection) {
+                txt = window.getSelection().toString();
+            } else if(document.getSelection) {
+                txt = document.getSelection().toString();
+            } else if(document.selection) {
+                txt = document.selection.createRange().text;
+            } else {
+                return;
+            }
+            var arr = document.getElementsByClassName("w");
+            for(i=0;i<8;i+=1) {
+                arr[i].classList.remove("f");
+            }
+            var arr2 = document.getElementsByClassName("d");
+            for(i=0;i<8;i+=1) {
+                arr2[i].classList.add("f");
+            }
+            count(txt, 2);
+            for(i=0;i<8;i+=1) {
+                arr[i].classList.add("f");
+            }
+            for(i=0;i<8;i+=1) {
+                arr2[i].classList.remove("f");
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <textarea id="textbox" onkeydown="textChanged();" onkeypress="textChanged();" onkeyup="textChanged();" onmouseup="textDragged();"></textarea>
+    <ul>
+        <b>전체 영역</b>
+        <li><b>한글</b> : <span id="kor" class="w f">0</span>자</li>
+        <li><b>영어</b> : <span id="eng" class="w f">0</span>자</li>
+        <li><b>공백 및 특수문자</b> : <span id="guitar" class="w f">0</span>자</li>
+        <li><b>공백 포함 글자수</b> : <span id="total" class="w f">0</span>자</li>
+        <li><b>공백 제외 글자수</b> : <span id="total_except_blank" class="w f">0</span>자</li>
+        <li><b>공백 포함 Byte</b> : <span id="byte" class="w f">0</span>바이트</li>
+        <li><b>공백 제외 Byte</b> : <span id="byte_except_blank" class="w f">0</span>바이트</li>
+        <li><b>Byte(NEIS 기준)</b> : <span id="byte_neis" class="w f">0</span>바이트</li>
+    </ul>
+    <ul>
+        <b>드래그된 영역</b>
+        <li><b>한글</b> : <span id="kor_d" class="d">0</span>자</li>
+        <li><b>영어</b> : <span id="eng_d" class="d">0</span>자</li>
+        <li><b>공백 및 특수문자</b> : <span id="guitar_d" class="d">0</span>자</li>
+        <li><b>공백 포함 글자수</b> : <span id="total_d" class="d">0</span>자</li>
+        <li><b>공백 제외 글자수</b> : <span id="total_except_blank_d" class="d">0</span>자</li>
+        <li><b>공백 포함 Byte</b> : <span id="byte_d" class="d">0</span>바이트</li>
+        <li><b>공백 제외 Byte</b> : <span id="byte_except_blank_d" class="d">0</span>바이트</li>
+        <li><b>Byte(NEIS 기준)</b> : <span id="byte_neis_d" class="d">0</span>바이트</li>
+    </ul>
+</body>
+
+</html>
