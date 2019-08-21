@@ -25,7 +25,7 @@
         var pattern_blank=/\s/;
         var pattern_endline=/(\n|\r\n)/;
 
-        function count(text, mode) {
+        function count(text) {
             var tot = text.length;
             var blank = 0;
             var kor = 0;
@@ -64,13 +64,13 @@
             document.getElementsByClassName("f")[2].innerHTML=tot-kor-eng;
             document.getElementsByClassName("f")[3].innerHTML=tot;
             document.getElementsByClassName("f")[4].innerHTML=tot-blank;
-            document.getElementsByClassName("f")[5]=byte;
+            document.getElementsByClassName("f")[5].innerHTML=byte;
             document.getElementsByClassName("f")[6].innerHTML=byte-blank;
             document.getElementsByClassName("f")[7].innerHTML=byte_n;
         }
         
         function textChanged(){
-            count(document.getElementById("textbox").value, 1);
+            count(document.getElementById("textbox").value);
         }
 
         function textDragged() {
@@ -82,7 +82,7 @@
             } else if(document.selection) {
                 txt = document.selection.createRange().text;
             } else {
-                return;
+                return false;
             }
             var arr = document.getElementsByClassName("w");
             for(i=0;i<8;i+=1) {
@@ -92,7 +92,7 @@
             for(i=0;i<8;i+=1) {
                 arr2[i].classList.add("f");
             }
-            count(txt, 2);
+            count(txt);
             for(i=0;i<8;i+=1) {
                 arr[i].classList.add("f");
             }
@@ -104,7 +104,7 @@
 </head>
 
 <body>
-    <textarea id="textbox" onkeydown="textChanged();" onkeypress="textChanged();" onkeyup="textChanged();" onmouseup="textDragged();"></textarea>
+    <textarea id="textbox" onkeydown="textDragged(); textChanged();" onkeyup="textDragged(); textChanged();" onmouseup="textDragged();"></textarea>
     <ul>
         <b>전체 영역</b>
         <li><b>한글</b> : <span id="kor" class="w f">0</span>자</li>
